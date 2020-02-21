@@ -18,8 +18,9 @@ bool array_create(Array *array, size_t element_size, size_t allocate)
 		array->_element_size = element_size;
 		return true;
 	}
-	else
+	else{
 		return false;
+	}
 }
 
 bool array_realloc(Array *array, size_t new_allocated)
@@ -28,7 +29,7 @@ bool array_realloc(Array *array, size_t new_allocated)
 	if(temp == NULL)
 		return false;
 
-	memmove(temp, array->_array, array->count * array->_allocated);
+	memmove(temp, array->_array, array->count * array->_element_size);
 	free(array->_array);
 	array->_array = temp;
 	array->_allocated = new_allocated;
@@ -42,14 +43,19 @@ bool array_extend(Array *array)
 }
 
 
-void array_set(Array *array, size_t pos, const void *element)
+void* array_get_pointer(const Array *array, size_t pos)
 {
-	memcpy((char*)array->_array + pos*array->_element_size, element, array->_element_size);
+	return (char*)array->_array + pos*array->_element_size;
 }
 
-void array_get(Array *array, size_t pos, void *element)
+void array_set(Array *array, size_t pos, const void *element)
 {
-	memcpy(element, (char*)array->_array + pos*array->_element_size, array->_element_size);
+	memcpy(array_get_pointer(array, pos), element, array->_element_size);
+}
+
+void array_get(const Array *array, size_t pos, void *element)
+{
+	memcpy(element, array_get_pointer(array, pos), array->_element_size);
 }
 
 
@@ -77,3 +83,4 @@ void array_pop_back(Array *array)
 {
 	array->count -= 1;
 }
+
