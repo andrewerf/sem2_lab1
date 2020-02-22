@@ -67,6 +67,14 @@ void array_fill(Array *array, const void *element)
 	array->count = array->_allocated;
 }
 
+void array_generate(Array *array, size_t count, void (*f)(size_t, void*))
+{
+	for(size_t i = 0; i < count; ++i){
+		f(i, array_get_pointer(array, i));
+	}
+	array->count = count;
+}
+
 
 bool array_push_back(Array *array, void *element)
 {
@@ -83,4 +91,58 @@ void array_pop_back(Array *array)
 {
 	array->count -= 1;
 }
+
+
+void array_map(Array *array, void* (*f)(void*))
+{
+	for(size_t i = 0; i < array->count; ++i){
+		array_set(array, i, f(array_get_pointer(array, i)));
+	}
+}
+
+void array_where(Array *array, bool (*h)(void*))
+{
+	size_t last_pos = 0;
+
+	for(size_t i = 0; i < array->count; ++i){
+
+		if(h(array_get_pointer(array, i))){
+			if(i > last_pos)
+				array_set(array, last_pos, array_get_pointer(array, i));
+			++last_pos;
+		}
+
+	}
+
+	array->count = last_pos;
+}
+
+void array_reduce(Array *array, void *start, void (*f)(void*, void*, void*), void* result)
+{
+	f(array_get_pointer(array, 0), start, result);
+	for(size_t i = 1; i < array->count; ++i){
+		f(array_get_pointer(array, i), result, result);
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
