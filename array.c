@@ -170,14 +170,17 @@ void array_qsort(Array *array, size_t first, size_t last, bool (*less)(void*,voi
 	do{
 		while(less(array_get_pointer(array, l), array_get_pointer(array, m)))
 			l += 1;
-		while(less(array_get_pointer(array, m), array_get_pointer(array, r)))
+		while(less(array_get_pointer(array, m), array_get_pointer(array, r)) && r > 0)
 			r -= 1;
 
 		if(l <= r){
 			swap(array_get_pointer(array, l), array_get_pointer(array, r), array->_element_size);
 
 			l += 1;
-			r -= 1;
+
+			if(r > 0)
+				r -= 1;
+			else break;
 		}
 	} while(l <= r);
 
