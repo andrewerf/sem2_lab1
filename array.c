@@ -2,6 +2,18 @@
 
 #include "array.h"
 
+
+void swap(void *a, void *b, size_t size)
+{
+	void *temp = malloc(size);
+	memcpy(temp, a, size);
+	memcpy(a, b, size);
+	memcpy(b, temp, size);
+
+	free(temp);
+}
+
+
 bool array_create(Array *array, size_t element_size, size_t allocate)
 {
 	if(element_size == 0)
@@ -146,12 +158,32 @@ void array_reduce(Array *array, void *start, void (*f)(void*, void*, void*), voi
 }
 
 
+void array_qsort(Array *array, size_t first, size_t last, bool (*less)(void*,void*))
+{
+	size_t l = first;
+	size_t r = last;
 
+	if(l >= r)
+		return;
 
+	size_t m = (l+r)/2;
+	do{
+		while(less(array_get_pointer(array, l), array_get_pointer(array, m)))
+			l += 1;
+		while(less(array_get_pointer(array, m), array_get_pointer(array, r)))
+			r -= 1;
 
+		if(l <= r){
+			swap(array_get_pointer(array, l), array_get_pointer(array, r), array->_element_size);
 
+			l += 1;
+			r -= 1;
+		}
+	} while(l <= r);
 
-
+	array_qsort(array, first, r, less);
+	array_qsort(array, l, last, less);
+}
 
 
 
