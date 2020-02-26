@@ -8,8 +8,8 @@
 typedef struct {
 
 	size_t count;
+	size_t buffer_size;
 
-	size_t _buffer_size;
 	void *_array;
 	size_t _allocated;
 	size_t _element_size;
@@ -19,13 +19,14 @@ typedef struct {
 bool array_create(Array *array, size_t element_size, size_t allocate);
 bool array_realloc(Array *array, size_t new_allocated);
 bool array_extend(Array *array);
+void array_free(Array *array);
 
 void* array_get_pointer(const Array *array, size_t pos);
-void array_set(Array *array, size_t pos, const void *element);
-void array_get(const Array *array, size_t pos, void *element);
+bool array_set(Array *array, size_t pos, const void *element);
+bool array_get(const Array *array, size_t pos, void *element);
 
-void array_fill(Array *array, const void *element);
-void array_generate(Array *array, size_t count, void (*f)(size_t, void*));
+bool array_fill(Array *array, const void *element);
+bool array_generate(Array *array, size_t count, void (*f)(size_t, void*));
 
 bool array_push_back(Array *array, void *element);
 void array_pop_back(Array *array);
