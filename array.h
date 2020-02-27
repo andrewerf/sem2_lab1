@@ -35,6 +35,7 @@ void array_map(Array *array, void* (*f)(void*));
 void array_where(Array *array, bool (*h)(void*));
 void array_reduce(Array *array, void *start, void (*f)(void*, void*, void*), void* result);
 
+bool array_concat(Array *dest, Array *a, Array *b);
 void array_qsort(Array *array, size_t first, size_t last, bool (*less)(void*,void*));
 
 #endif // ARRAY_H

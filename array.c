@@ -16,14 +16,13 @@ void swap(void *a, void *b, size_t size)
 
 bool array_create(Array *array, size_t element_size, size_t allocate)
 {
-	if(element_size == 0)
+	if(element_size == 0 || allocate == 0)
 		return false;
 
 	array->count = 0;
 	array->_element_size = 0;
 	array->_allocated = 0;
-	if(allocate == 0)
-		allocate = array->buffer_size;
+	array->buffer_size = allocate;
 
 	array->_array = malloc(allocate * element_size);
 	if(array->_array != NULL){
@@ -70,7 +69,7 @@ void* array_get_pointer(const Array *array, size_t pos)
 
 bool array_set(Array *array, size_t pos, const void *element)
 {
-	if(pos >= array->_allocated)
+	if(pos >= array->count)
 		return false;
 	memcpy(array_get_pointer(array, pos), element, array->_element_size);
 	return true;
@@ -157,6 +156,23 @@ void array_reduce(Array *array, void *start, void (*f)(void*, void*, void*), voi
 	}
 }
 
+
+bool array_concat(Array *dest, Array *a, Array *b)
+{
+	if(dest->_allocated < a->count + b->count)
+		if(!array_realloc(dest, a->count + b->count))
+			return false;
+
+	if(a != dest){
+		memcpy(dest->_array, a->_array, a->count * a->_element_size);
+		dest->count = a->count;
+	}
+	void *s = array_get_pointer(dest, dest->count);
+	memcpy(s, b->_array, b->count * b->_element_size);
+	dest->count = a->count + b->count;
+
+	return true;
+}
 
 void array_qsort(Array *array, size_t first, size_t last, bool (*less)(void*,void*))
 {
