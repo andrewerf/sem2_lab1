@@ -31,7 +31,7 @@ bool array_generate(Array *array, size_t count, void (*f)(size_t, void*));
 bool array_push_back(Array *array, void *element);
 void array_pop_back(Array *array);
 
-void array_map(Array *array, void* (*f)(void*));
+void array_map(Array *array, void (*f)(void *));
 void array_where(Array *array, bool (*h)(void*));
 void array_reduce(Array *array, void *start, void (*f)(void*, void*, void*), void* result);
 

@@ -124,10 +124,10 @@ void array_pop_back(Array *array)
 }
 
 
-void array_map(Array *array, void* (*f)(void*))
+void array_map(Array *array, void (*f)(void*))
 {
 	for(size_t i = 0; i < array->count; ++i){
-		array_set(array, i, f(array_get_pointer(array, i)));
+		f(array_get_pointer(array, i));
 	}
 }
 
