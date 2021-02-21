@@ -21,6 +21,8 @@ bool array_realloc(Array *array, size_t new_allocated);
 bool array_extend(Array *array);
 void array_free(Array *array);
 
+void array_copy(Array *to, Array *from);
+
 void* array_get_pointer(const Array *array, size_t pos);
 bool array_set(Array *array, size_t pos, const void *element);
 bool array_get(const Array *array, size_t pos, void *element);

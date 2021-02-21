@@ -61,6 +61,17 @@ void array_free(Array *array)
 	array->_allocated = 0;
 }
 
+void array_copy(Array *to, Array *from)
+{
+    size_t bytes = from->_element_size * from->count;
+    to->_array = malloc(bytes);
+    memcpy(to->_array, from->_array, bytes);
+    to->count = from->count;
+    to->_allocated = from->count;
+    to->buffer_size = from->buffer_size;
+    to->_element_size = from->_element_size;
+}
+
 
 void* array_get_pointer(const Array *array, size_t pos)
 {

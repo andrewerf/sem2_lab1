@@ -6,6 +6,7 @@
 #include <string.h>
 
 #include "array.h"
+#include "polynomial.h"
 #include "test.h"
 
 
@@ -261,6 +262,66 @@ Error test_array_qsort()
 	return OK;
 }
 
+Error test_polynomial()
+{
+    Polynomial *p = malloc(sizeof(Polynomial));
+    polynomial_create(p, DComplex);
+    array_realloc(p->coefficients, 3);
+    array_fill(p->coefficients, p->zero);
+
+    DComplex_t num, num1;
+    for(size_t i = 0; i < 3; ++i)
+    {
+        num.real = i;
+        num.imaginary = 0;
+        array_set(p->coefficients, i, &num);
+    }
+    //p(x) = x + 2x^2
+
+    num.real = 2;
+    polynomial_substitute(p, &num1, &num);
+    if(num1.real != 10 || num1.imaginary != 0)
+        return ERROR;
+    //p(2) = 2 + 2*2^2 = 10
+
+    Polynomial *p2 = malloc(sizeof(Polynomial));
+    polynomial_create(p2, DComplex);
+    array_realloc(p2->coefficients, 5);
+    array_fill(p2->coefficients, p2->zero);
+
+    for(size_t i = 0; i < 5; ++i)
+    {
+        num.real = 0;
+        num.imaginary = 2.0*i;
+        array_set(p2->coefficients, i, &num);
+    }
+    //p2(x) = 2jx + 4jx^2 + 6jx^3 + 8jx^4
+
+    Polynomial p3;
+    polynomial_create(&p3, DComplex);
+    polynomial_add(&p3, p, p2);
+    //p3(x) = (1+2j)x + (2+4j)x^2 + 6jx^3 + 8jx^4
+
+    num.real = 1;
+    num.imaginary = 0;
+    polynomial_substitute(&p3, &num1, &num);
+    if(num1.real != 3 || num1.imaginary != 20)
+        return ERROR;
+
+
+    polynomial_subtract(&p3, p, p2);
+    //p3(x) = (1-2j)x + (2-4j)x^2 - 6jx^3 - 8jx^4
+
+    polynomial_substitute(&p3, &num1, &num);
+    if(num1.real != 3 || num1.imaginary != -20)
+        return ERROR;
+
+    polynomial_free(p);
+    polynomial_free(p2);
+    free(p);
+    free(p2);
+    return OK;
+}
 
 int main(){
 
@@ -274,7 +335,8 @@ int main(){
 		{test_array_where, "array_where"},
 		{test_array_reduce, "array_reduce"},
 		{test_array_qsort, "array_qsort"},
-		{test_array_concat, "array_concat"}
+		{test_array_concat, "array_concat"},
+        {test_polynomial, "test_polynomial"}
 	};
 	const unsigned short n = sizeof(functions) / sizeof (test_function);
 	unsigned short errors = 0;
